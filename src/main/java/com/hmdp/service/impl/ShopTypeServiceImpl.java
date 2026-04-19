@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.hmdp.utils.RedisConstants.CACHE_SHOP_KEY;
+import static com.hmdp.utils.RedisConstants.CACHE_SHOP_TTL;
 
 /**
  * <p>
@@ -43,7 +45,7 @@ public class ShopTypeServiceImpl extends ServiceImpl<ShopTypeMapper, ShopType> i
         }
         //不存在，根据id查询数据库并写入redis
         List<ShopType> typeList = query().orderByAsc("sort").list();
-        stringRedisTemplate.opsForValue().set(shoptype, JSONUtil.toJsonStr(typeList));
+        stringRedisTemplate.opsForValue().set(shoptype, JSONUtil.toJsonStr(typeList), CACHE_SHOP_TTL, TimeUnit.MINUTES);
         return typeList;
     }
 }
